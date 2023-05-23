@@ -38,7 +38,7 @@ vim.api.nvim_create_autocmd('User', {
 ------------------------------
 require('koala_init').load_lazy {
 	-- lazy.nvim user spec (combined with KoalaVim spec)
-	spec = {
+	user_spec = {
 		{ import = 'plugins' },
 	},
 	-- lazy.nvim user opts (overrides KoalaVim lazy.nvim opts)
