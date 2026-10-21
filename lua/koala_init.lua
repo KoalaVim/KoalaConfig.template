@@ -36,10 +36,13 @@ function M.load_lazy(opts)
 
 	local user_spec = opts.user_spec or {}
 
-	-- Concat user_spec with koala_spec
+	-- Concat koala_spec with user_spec (user_spec goes last, LazyVim's spec must be first)
 	local combined_spec = {}
-	table.move(user_spec, 1, #user_spec, 1, combined_spec)
-	table.move(koala_spec, 1, #koala_spec, #combined_spec + 1, combined_spec)
+	table.move(koala_spec, 1, #koala_spec, 1, combined_spec)
+	table.move(user_spec, 1, #user_spec, #combined_spec + 1, combined_spec)
+
+	-- Marks the new bootstrap layout, KoalaVim warns if it's missing
+	vim.g.koala_init_version = 2
 
 	local koala_lazy_opts = {
 		-- folke/lazy.nvim settings

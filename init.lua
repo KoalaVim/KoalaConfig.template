@@ -2,9 +2,11 @@
 -- This file is the entry point of a neovim configuration
 --
 -- In order to load the config with KoalaVim we load:
---     1. KoalaVim config - keymaps, options, usercmds, autocmds
---     2. User config - keymaps, options, usercmds, autocmds (Overrides KoalaVim config)
---     3. lazy.nvim - Loads the plugins
+--     1. KoalaVim - loads kvim.conf, then registers the loading of the configs below
+--     2. lazy.nvim - Loads the plugins (LazyVim -> KoalaVim -> user plugins), and then in this order:
+--         a. LazyVim config - keymaps, options, autocmds
+--         b. KoalaVim config - keymaps, options, usercmds, autocmds (Overrides LazyVim config)
+--         c. User config (`lua/config/`) - keymaps, options, usercmds, autocmds (Overrides KoalaVim config)
 ------------------------------
 
 ------------------------------
@@ -21,15 +23,14 @@ require('koala_init').load_koala(leader_key)
 
 ------------------------------
 -- Load user config
+-- `lua/config/` is loaded by LazyVim and KoalaVim, don't require it here (it would load twice)
 ------------------------------
-local require_dir = require('KoalaVim.utils.require_dir')
-require_dir.recursive_require('config')
 
 -- Lazy load config/lazy after KoalaVim
 vim.api.nvim_create_autocmd('User', {
 	pattern = 'KoalaVimStarted',
 	callback = function()
-		require_dir.recursive_require('config_lazy')
+		require('KoalaVim.utils.require_dir').recursive_require('config_lazy')
 	end,
 })
 
@@ -37,7 +38,7 @@ vim.api.nvim_create_autocmd('User', {
 -- Load lazy.nvim
 ------------------------------
 require('koala_init').load_lazy({
-	-- lazy.nvim user spec (combined with KoalaVim spec)
+	-- lazy.nvim user spec (combined with KoalaVim spec, loaded after it)
 	user_spec = {
 		{ import = 'plugins' },
 	},
